@@ -1,0 +1,158 @@
+{
+ "checkpoint": {
+  "repo_id": "lerobot/smolvla_libero",
+  "revision": "a24f1f380461b665158d52acd140152c79e8b36d",
+  "rename_map": {
+   "observation.images.image": "observation.images.camera1",
+   "observation.images.image2": "observation.images.camera2"
+  },
+  "local_dir": "~/.cache/huggingface/hub/models--lerobot--smolvla_libero/snapshots/a24f1f380461b665158d52acd140152c79e8b36d"
+ },
+ "type": "smolvla",
+ "input_features": {
+  "observation.state": {
+   "type": "STATE",
+   "shape": [
+    8
+   ]
+  },
+  "observation.images.camera1": {
+   "type": "VISUAL",
+   "shape": [
+    3,
+    256,
+    256
+   ]
+  },
+  "observation.images.camera2": {
+   "type": "VISUAL",
+   "shape": [
+    3,
+    256,
+    256
+   ]
+  }
+ },
+ "output_features": {
+  "action": {
+   "type": "ACTION",
+   "shape": [
+    7
+   ]
+  }
+ },
+ "chunk_size": 50,
+ "n_action_steps_shipped": 50,
+ "num_steps": 10,
+ "resize_imgs_with_padding": [
+  512,
+  512
+ ],
+ "max_state_dim": 32,
+ "max_action_dim": 32,
+ "normalization_mapping": {
+  "VISUAL": "IDENTITY",
+  "STATE": "MEAN_STD",
+  "ACTION": "MEAN_STD"
+ },
+ "vlm_model_name": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+ "num_vlm_layers": 16,
+ "expert_width_multiplier": 0.75,
+ "pretrained_from": "lerobot/smolvla_base",
+ "saved_rename_map": {
+  "observation.images.image": "observation.images.camera1",
+  "observation.images.image2": "observation.images.camera2"
+ },
+ "train_config": {
+  "dataset": "lerobot/libero",
+  "dataset_revision": null,
+  "steps": 25000,
+  "batch_size": 32,
+  "env_fps_in_train_config": 30
+ },
+ "normalizer_stats": {
+  "action.mean": [
+   0.062780000269413,
+   0.08683999627828598,
+   -0.09036999940872192,
+   0.000539999979082495,
+   0.005640000104904175,
+   -0.005229999776929617,
+   -0.049639999866485596
+  ],
+  "action.std": [
+   0.3355199992656708,
+   0.3784500062465668,
+   0.4447300136089325,
+   0.039239998906850815,
+   0.06339000165462494,
+   0.0779699981212616,
+   0.998769998550415
+  ],
+  "episode_index.mean": [
+   721.1276245117188
+  ],
+  "episode_index.std": [
+   507.76336669921875
+  ],
+  "frame_index.mean": [
+   94.64835357666016
+  ],
+  "frame_index.std": [
+   72.5956802368164
+  ],
+  "index.mean": [
+   136732.0
+  ],
+  "index.std": [
+   78942.546875
+  ],
+  "observation.state.mean": [
+   -0.04651999846100807,
+   0.03440999984741211,
+   0.764549970626831,
+   2.972209930419922,
+   -0.22046999633312225,
+   -0.12557999789714813,
+   0.026909999549388885,
+   -0.02718999981880188
+  ],
+  "observation.state.std": [
+   0.10493999719619751,
+   0.1517699956893921,
+   0.37852001190185547,
+   0.3442699909210205,
+   0.9069499969482422,
+   0.3253900110721588,
+   0.014179999940097332,
+   0.014059999957680702
+  ],
+  "task_index.mean": [
+   17.112180709838867
+  ],
+  "task_index.std": [
+   11.900400161743164
+  ],
+  "timestamp.mean": [
+   9.464839935302734
+  ],
+  "timestamp.std": [
+   7.259570121765137
+  ]
+ },
+ "unnormalizer_stats_equal_normalizer": true,
+ "stats_vs_dataset": {
+  "observation.state.mean": {
+   "max_abs_diff_vs_dataset": 4.398274189298945e-08
+  },
+  "observation.state.std": {
+   "max_abs_diff_vs_dataset": 1.4619067179033607e-08
+  },
+  "action.mean": {
+   "max_abs_diff_vs_dataset": 2.2278189015789707e-09
+  },
+  "action.std": {
+   "max_abs_diff_vs_dataset": 1.140268085508822e-08
+  }
+ }
+}

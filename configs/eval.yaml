@@ -1,0 +1,30 @@
+# Closed-loop evaluation settings shared by every policy arm (baseline, fine-tuned).
+# Changing anything here between arms invalidates the paired comparison.
+
+env:
+  # Renders at the dataset's resolution (lerobot/libero and the LIBERO-90 data are 256x256).
+  # LeRobot's LiberoEnv config defaults to 360; SmolVLA resizes either to 512 with padding,
+  # but 256 keeps the eval pixels closest to what the policy was trained on.
+  image_size: 256
+  # MUST stay 20: LIBERO actions are per-step deltas, so control_freq changes how far each
+  # action moves the arm (lerobot#4614). lerobot/libero metadata says fps=10 (wrong for sim).
+  control_freq: 20
+  control_mode: relative       # OSC_POSE delta actions; matches LIBERO demonstrations
+  num_steps_wait: 10           # no-op settle steps after reset (LeRobot/OpenVLA default)
+  # null -> LeRobot's per-suite limit (libero_90: 400, libero_object: 280, ...)
+  episode_length: null
+  # Official LIBERO init states are used for final evaluation; screening uses seeded resets.
+  hard_reset: true
+
+policy:
+  device: cuda
+  # Replan every 10 actions. The checkpoint ships n_action_steps=50 (= chunk_size), which the
+  # SmolVLA paper (Table 13) and lerobot#4614 show costs ~20pp on LIBERO.
+  n_action_steps: 10
+  num_steps: 10                # flow-matching denoising steps (checkpoint default)
+  use_amp: false               # fp32 inference, as in the checkpoint config
+
+video:
+  fps: 20
+  # Save every episode: the clips are small and needed for failure tagging.
+  save: all

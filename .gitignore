@@ -1,0 +1,40 @@
+# --- Private / reference-only ---
+PROJECT_SPEC.md
+VLA_Simulation_POC_Project_Spec.md
+docs/learning_notes.md
+
+# --- Environment & tooling ---
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.vscode/
+.idea/
+.claude/
+.DS_Store
+.env
+
+# LIBERO's auto-generated config (machine-specific absolute paths; recreated on first run)
+.libero/
+
+# --- External code, models and datasets (fetched by pinned revision, never vendored) ---
+third_party/
+data/
+outputs/
+checkpoints/
+*.safetensors
+*.pt
+*.pth
+*.hdf5
+
+# --- Heavy / regenerable experiment artifacts ---
+# Kept: per-episode records (episodes.jsonl), summaries, run manifests (run_config_*.json),
+#       plots, and the small M0 audit renders referenced in docs/compatibility.md.
+results/**/*.mp4
+results/**/*.gif
+results/**/*.npy
+results/**/log_*.txt
+results/**/*.png
+!results/plots/*.png
+!results/smoke/*.png

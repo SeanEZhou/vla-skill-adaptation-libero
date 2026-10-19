@@ -1,0 +1,421 @@
+{
+ "suite": "libero_object",
+ "task_id": 0,
+ "hdf5": "libero_object/pick_up_the_alphabet_soup_and_place_it_in_the_basket_demo.hdf5",
+ "hdf5_revision": "f13aa24a3da8c43c7225569f28c562979fa0e35a",
+ "n_demos": 50,
+ "replay_success_rate": 0.96,
+ "replay_first_success_step_median": 140.0,
+ "noop_negative_control_success": false,
+ "leakage": {
+  "compared": "qpos only (nq=58)",
+  "state_dim_demo": 110,
+  "state_dim_official": 110,
+  "min_demo_to_official_dist": 0.08582516982975033,
+  "median_demo_to_official_dist": 0.09300334470810441,
+  "median_official_nn_dist": 0.03581890180509559,
+  "n_demos_within_1e-6": 0
+ },
+ "demos": [
+  {
+   "demo": "demo_0",
+   "len": 148,
+   "first_success_step": 121,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09974395341109486,
+   "nearest_official_init_id": 39
+  },
+  {
+   "demo": "demo_1",
+   "len": 179,
+   "first_success_step": 159,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09072836646942484,
+   "nearest_official_init_id": 39
+  },
+  {
+   "demo": "demo_2",
+   "len": 136,
+   "first_success_step": 125,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09187885982261079,
+   "nearest_official_init_id": 37
+  },
+  {
+   "demo": "demo_3",
+   "len": 146,
+   "first_success_step": 135,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09203543932180416,
+   "nearest_official_init_id": 17
+  },
+  {
+   "demo": "demo_4",
+   "len": 153,
+   "first_success_step": 143,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09058341503689436,
+   "nearest_official_init_id": 32
+  },
+  {
+   "demo": "demo_5",
+   "len": 150,
+   "first_success_step": 139,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09887468455277125,
+   "nearest_official_init_id": 4
+  },
+  {
+   "demo": "demo_6",
+   "len": 156,
+   "first_success_step": 145,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.08697382579374473,
+   "nearest_official_init_id": 1
+  },
+  {
+   "demo": "demo_7",
+   "len": 153,
+   "first_success_step": 136,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09177446788353127,
+   "nearest_official_init_id": 29
+  },
+  {
+   "demo": "demo_8",
+   "len": 194,
+   "first_success_step": 183,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.08986800894421915,
+   "nearest_official_init_id": 1
+  },
+  {
+   "demo": "demo_9",
+   "len": 141,
+   "first_success_step": 131,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09396827380554251,
+   "nearest_official_init_id": 8
+  },
+  {
+   "demo": "demo_10",
+   "len": 157,
+   "first_success_step": 146,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09599713581032975,
+   "nearest_official_init_id": 39
+  },
+  {
+   "demo": "demo_11",
+   "len": 152,
+   "first_success_step": 141,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.1014990904881812,
+   "nearest_official_init_id": 27
+  },
+  {
+   "demo": "demo_12",
+   "len": 172,
+   "first_success_step": 161,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09190198667477233,
+   "nearest_official_init_id": 2
+  },
+  {
+   "demo": "demo_13",
+   "len": 146,
+   "first_success_step": 126,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09364128592827994,
+   "nearest_official_init_id": 22
+  },
+  {
+   "demo": "demo_14",
+   "len": 149,
+   "first_success_step": 138,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.08896176172949125,
+   "nearest_official_init_id": 1
+  },
+  {
+   "demo": "demo_15",
+   "len": 154,
+   "first_success_step": 127,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09022591600678073,
+   "nearest_official_init_id": 36
+  },
+  {
+   "demo": "demo_16",
+   "len": 155,
+   "first_success_step": 144,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09047951817867854,
+   "nearest_official_init_id": 17
+  },
+  {
+   "demo": "demo_17",
+   "len": 154,
+   "first_success_step": 144,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.08582516982975033,
+   "nearest_official_init_id": 13
+  },
+  {
+   "demo": "demo_18",
+   "len": 152,
+   "first_success_step": 141,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.10320194396140278,
+   "nearest_official_init_id": 21
+  },
+  {
+   "demo": "demo_19",
+   "len": 157,
+   "first_success_step": 146,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.0971110017844229,
+   "nearest_official_init_id": 48
+  },
+  {
+   "demo": "demo_20",
+   "len": 154,
+   "first_success_step": 135,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09559476421952798,
+   "nearest_official_init_id": 39
+  },
+  {
+   "demo": "demo_21",
+   "len": 163,
+   "first_success_step": 142,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.10426171875916508,
+   "nearest_official_init_id": 27
+  },
+  {
+   "demo": "demo_22",
+   "len": 146,
+   "first_success_step": 135,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.0960433082370097,
+   "nearest_official_init_id": 28
+  },
+  {
+   "demo": "demo_23",
+   "len": 161,
+   "first_success_step": 150,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.08954276479632531,
+   "nearest_official_init_id": 2
+  },
+  {
+   "demo": "demo_24",
+   "len": 177,
+   "first_success_step": 156,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09317091312950324,
+   "nearest_official_init_id": 19
+  },
+  {
+   "demo": "demo_25",
+   "len": 143,
+   "first_success_step": 131,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09258213619430432,
+   "nearest_official_init_id": 39
+  },
+  {
+   "demo": "demo_26",
+   "len": 136,
+   "first_success_step": 125,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09371891924868773,
+   "nearest_official_init_id": 15
+  },
+  {
+   "demo": "demo_27",
+   "len": 154,
+   "first_success_step": null,
+   "success_at_end": false,
+   "nearest_official_init_dist": 0.09764957965496998,
+   "nearest_official_init_id": 39
+  },
+  {
+   "demo": "demo_28",
+   "len": 136,
+   "first_success_step": 126,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.08796078507137572,
+   "nearest_official_init_id": 32
+  },
+  {
+   "demo": "demo_29",
+   "len": 175,
+   "first_success_step": 168,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09266882560619048,
+   "nearest_official_init_id": 12
+  },
+  {
+   "demo": "demo_30",
+   "len": 155,
+   "first_success_step": 137,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09388657021488211,
+   "nearest_official_init_id": 12
+  },
+  {
+   "demo": "demo_31",
+   "len": 179,
+   "first_success_step": null,
+   "success_at_end": false,
+   "nearest_official_init_dist": 0.09187979132724694,
+   "nearest_official_init_id": 36
+  },
+  {
+   "demo": "demo_32",
+   "len": 153,
+   "first_success_step": 133,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09353408142282811,
+   "nearest_official_init_id": 48
+  },
+  {
+   "demo": "demo_33",
+   "len": 152,
+   "first_success_step": 141,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09428098747760072,
+   "nearest_official_init_id": 39
+  },
+  {
+   "demo": "demo_34",
+   "len": 160,
+   "first_success_step": 149,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09931479486046056,
+   "nearest_official_init_id": 39
+  },
+  {
+   "demo": "demo_35",
+   "len": 150,
+   "first_success_step": 139,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.08863702869151686,
+   "nearest_official_init_id": 1
+  },
+  {
+   "demo": "demo_36",
+   "len": 151,
+   "first_success_step": 140,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09544251083087157,
+   "nearest_official_init_id": 39
+  },
+  {
+   "demo": "demo_37",
+   "len": 149,
+   "first_success_step": 140,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09283577628670558,
+   "nearest_official_init_id": 8
+  },
+  {
+   "demo": "demo_38",
+   "len": 157,
+   "first_success_step": 146,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09643669984669555,
+   "nearest_official_init_id": 4
+  },
+  {
+   "demo": "demo_39",
+   "len": 171,
+   "first_success_step": 160,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09039534540409269,
+   "nearest_official_init_id": 23
+  },
+  {
+   "demo": "demo_40",
+   "len": 137,
+   "first_success_step": 126,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09190412841431767,
+   "nearest_official_init_id": 39
+  },
+  {
+   "demo": "demo_41",
+   "len": 151,
+   "first_success_step": 138,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09579925273589683,
+   "nearest_official_init_id": 48
+  },
+  {
+   "demo": "demo_42",
+   "len": 160,
+   "first_success_step": 149,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09463409849874325,
+   "nearest_official_init_id": 30
+  },
+  {
+   "demo": "demo_43",
+   "len": 151,
+   "first_success_step": 140,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09508732501225944,
+   "nearest_official_init_id": 31
+  },
+  {
+   "demo": "demo_44",
+   "len": 150,
+   "first_success_step": 140,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09793189046750495,
+   "nearest_official_init_id": 39
+  },
+  {
+   "demo": "demo_45",
+   "len": 149,
+   "first_success_step": 138,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09206244368185969,
+   "nearest_official_init_id": 6
+  },
+  {
+   "demo": "demo_46",
+   "len": 189,
+   "first_success_step": 178,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09080280690375274,
+   "nearest_official_init_id": 1
+  },
+  {
+   "demo": "demo_47",
+   "len": 196,
+   "first_success_step": 177,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09322166908064602,
+   "nearest_official_init_id": 31
+  },
+  {
+   "demo": "demo_48",
+   "len": 151,
+   "first_success_step": 130,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.08980228214973322,
+   "nearest_official_init_id": 1
+  },
+  {
+   "demo": "demo_49",
+   "len": 148,
+   "first_success_step": 137,
+   "success_at_end": true,
+   "nearest_official_init_dist": 0.09280959355040552,
+   "nearest_official_init_id": 30
+  }
+ ]
+}

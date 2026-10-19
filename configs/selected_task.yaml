@@ -1,0 +1,21 @@
+# Frozen target task and evaluation set. Selected by the pre-registered rule in
+# docs/experiment_log.md from screening on seeded layouts 10000-10009 (not these init states).
+# Do not edit after the baseline final evaluation has started.
+task:
+  suite: libero_90
+  task_id: 56
+  name: LIVING_ROOM_SCENE3_pick_up_the_butter_and_put_it_in_the_tray
+  instruction: pick up the butter and put it in the tray
+  max_steps: 400            # LeRobot default for libero_90 (longest libero_90 demo: 373 steps)
+
+eval_set:
+  # All 50 official LIBERO init states for this task. Never used for screening or training.
+  init_states: "0-49"
+  env_seed: 1000
+
+data:
+  # Demonstrations for this task (Milestone 2). Original HDF5 for verification/replay.
+  hdf5: libero_90/LIVING_ROOM_SCENE3_pick_up_the_butter_and_put_it_in_the_tray_demo.hdf5
+  lerobot_repo: jesbu1/libero_90_lerobot
+  lerobot_revision: fa5ab6b7cdcab51fdfd88c8f216c00426508ecde
+  n_demos_lerobot: 50

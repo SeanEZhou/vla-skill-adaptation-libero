@@ -1,0 +1,27 @@
+{
+ "policy": "baseline_smolvla_libero",
+ "per_task": {
+  "0": {
+   "instruction": "pick up the alphabet soup and place it in the basket",
+   "successes": 2,
+   "n": 2,
+   "rate": 1.0,
+   "ci95": [
+    0.34238022750665303,
+    1.0
+   ],
+   "mean_steps": 189.5,
+   "eval_wall_time_s": 46.49721655199983,
+   "inference_latency_mean_ms": 454.0192074615342
+  }
+ },
+ "overall": {
+  "successes": 2,
+  "n": 2,
+  "rate": 1.0,
+  "ci95": [
+   0.34238022750665303,
+   1.0
+  ]
+ }
+}

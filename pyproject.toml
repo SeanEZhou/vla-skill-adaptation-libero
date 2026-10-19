@@ -1,0 +1,49 @@
+[project]
+name = "vla-sim-poc"
+version = "0.1.0"
+description = "SmolVLA skill adaptation on LIBERO in simulation: frozen baseline vs fine-tuned, closed-loop evaluation."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    # LeRobot v0.6.1 (tag commit), pinned by hash. Provides LiberoEnv, SmolVLA, lerobot-train/eval.
+    "lerobot[smolvla,libero] @ git+https://github.com/huggingface/lerobot.git@7e241bd630a3719a56157a497ce5d08f244784f1",
+    # MuJoCo >= 3.4.0 changes box-box contact and breaks stored LIBERO init states (lerobot#4390).
+    "mujoco==3.3.7",
+    "pyyaml>=6",
+    "imageio[ffmpeg]>=2.34",
+    "pandas>=2.2",
+    "matplotlib>=3.8",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/vla_sim_poc"]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.uv]
+python-preference = "managed"
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu128" }]
+torchvision = [{ index = "pytorch-cu128" }]
+torchcodec = [{ index = "pytorch-cpu" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

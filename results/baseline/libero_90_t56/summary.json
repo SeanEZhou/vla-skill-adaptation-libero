@@ -1,0 +1,27 @@
+{
+ "policy": "baseline_smolvla_libero",
+ "per_task": {
+  "56": {
+   "instruction": "pick up the butter and put it in the tray",
+   "successes": 0,
+   "n": 50,
+   "rate": 0.0,
+   "ci95": [
+    6.938893903907228e-18,
+    0.07134759913335872
+   ],
+   "mean_steps": 400.0,
+   "eval_wall_time_s": 1432.160941643995,
+   "inference_latency_mean_ms": 392.71238703150215
+  }
+ },
+ "overall": {
+  "successes": 0,
+  "n": 50,
+  "rate": 0.0,
+  "ci95": [
+   6.938893903907228e-18,
+   0.07134759913335872
+  ]
+ }
+}

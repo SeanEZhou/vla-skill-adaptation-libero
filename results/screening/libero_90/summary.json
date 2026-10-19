@@ -1,0 +1,209 @@
+{
+ "policy": "baseline_smolvla_libero",
+ "per_task": {
+  "6": {
+   "instruction": "open the bottom drawer of the cabinet",
+   "successes": 0,
+   "n": 10,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.2775327998628892
+   ],
+   "mean_steps": 400.0,
+   "eval_wall_time_s": 511.5854455389997,
+   "inference_latency_mean_ms": 496.24429083000285
+  },
+  "16": {
+   "instruction": "stack the black bowl at the front on the black bowl in the middle",
+   "successes": 0,
+   "n": 10,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.2775327998628892
+   ],
+   "mean_steps": 400.0,
+   "eval_wall_time_s": 416.7478022939986,
+   "inference_latency_mean_ms": 405.84692267249807
+  },
+  "18": {
+   "instruction": "put the frying pan on the stove",
+   "successes": 0,
+   "n": 10,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.2775327998628892
+   ],
+   "mean_steps": 400.0,
+   "eval_wall_time_s": 632.834822113,
+   "inference_latency_mean_ms": 413.7916623625086
+  },
+  "19": {
+   "instruction": "put the moka pot on the stove",
+   "successes": 2,
+   "n": 10,
+   "rate": 0.2,
+   "ci95": [
+    0.05668215145437519,
+    0.5098375284633583
+   ],
+   "mean_steps": 384.8,
+   "eval_wall_time_s": 608.6844000800002,
+   "inference_latency_mean_ms": 420.0339703672722
+  },
+  "27": {
+   "instruction": "put the wine bottle on the wine rack",
+   "successes": 0,
+   "n": 10,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.2775327998628892
+   ],
+   "mean_steps": 400.0,
+   "eval_wall_time_s": 433.6766724689992,
+   "inference_latency_mean_ms": 407.3926037050103
+  },
+  "33": {
+   "instruction": "close the microwave",
+   "successes": 3,
+   "n": 10,
+   "rate": 0.3,
+   "ci95": [
+    0.10779126740630099,
+    0.6032218525388546
+   ],
+   "mean_steps": 377.7,
+   "eval_wall_time_s": 434.6332225309998,
+   "inference_latency_mean_ms": 394.8008047806751
+  },
+  "34": {
+   "instruction": "put the yellow and white mug to the front of the white mug",
+   "successes": 0,
+   "n": 10,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.2775327998628892
+   ],
+   "mean_steps": 400.0,
+   "eval_wall_time_s": 503.86442653000086,
+   "inference_latency_mean_ms": 415.47871063248976
+  },
+  "35": {
+   "instruction": "open the microwave",
+   "successes": 0,
+   "n": 10,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.2775327998628892
+   ],
+   "mean_steps": 400.0,
+   "eval_wall_time_s": 480.53849185999934,
+   "inference_latency_mean_ms": 409.8997403875034
+  },
+  "39": {
+   "instruction": "turn off the stove",
+   "successes": 0,
+   "n": 10,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.2775327998628892
+   ],
+   "mean_steps": 400.0,
+   "eval_wall_time_s": 616.2381653290004,
+   "inference_latency_mean_ms": 405.8635147625
+  },
+  "42": {
+   "instruction": "put the frying pan under the cabinet shelf",
+   "successes": 0,
+   "n": 10,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.2775327998628892
+   ],
+   "mean_steps": 400.0,
+   "eval_wall_time_s": 564.5291816190002,
+   "inference_latency_mean_ms": 393.498975887494
+  },
+  "56": {
+   "instruction": "pick up the butter and put it in the tray",
+   "successes": 0,
+   "n": 10,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.2775327998628892
+   ],
+   "mean_steps": 400.0,
+   "eval_wall_time_s": 393.9712827479989,
+   "inference_latency_mean_ms": 409.66367860497377
+  },
+  "65": {
+   "instruction": "put the red mug on the left plate",
+   "successes": 0,
+   "n": 10,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.2775327998628892
+   ],
+   "mean_steps": 400.0,
+   "eval_wall_time_s": 405.9281116690004,
+   "inference_latency_mean_ms": 403.66283976001114
+  },
+  "71": {
+   "instruction": "put the red mug on the plate",
+   "successes": 0,
+   "n": 10,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.2775327998628892
+   ],
+   "mean_steps": 400.0,
+   "eval_wall_time_s": 375.13581627400026,
+   "inference_latency_mean_ms": 393.4839539625034
+  },
+  "76": {
+   "instruction": "pick up the yellow and white mug and place it to the right of the caddy",
+   "successes": 0,
+   "n": 10,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.2775327998628892
+   ],
+   "mean_steps": 400.0,
+   "eval_wall_time_s": 385.7190136989998,
+   "inference_latency_mean_ms": 400.07920413001443
+  },
+  "87": {
+   "instruction": "pick up the book on the left and place it on top of the shelf",
+   "successes": 0,
+   "n": 10,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.2775327998628892
+   ],
+   "mean_steps": 400.0,
+   "eval_wall_time_s": 377.0015439379995,
+   "inference_latency_mean_ms": 406.8992823549934
+  }
+ },
+ "overall": {
+  "successes": 5,
+  "n": 150,
+  "rate": 0.03333333333333333,
+  "ci95": [
+   0.01432043189809255,
+   0.07565179617877894
+  ]
+ }
+}

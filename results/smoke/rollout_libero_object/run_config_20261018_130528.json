@@ -1,0 +1,101 @@
+{
+ "args": {
+  "configs": [
+   "eval.yaml",
+   "baseline.yaml"
+  ],
+  "suite": "libero_object",
+  "task_ids": "0",
+  "init_states": "0-1",
+  "seeds": null,
+  "seed": 1000,
+  "out": "results/smoke/rollout_libero_object",
+  "no_video": false,
+  "max_steps": null,
+  "set": []
+ },
+ "config": {
+  "env": {
+   "image_size": 256,
+   "control_freq": 20,
+   "control_mode": "relative",
+   "num_steps_wait": 10,
+   "episode_length": null,
+   "hard_reset": true
+  },
+  "policy": {
+   "device": "cuda",
+   "n_action_steps": 10,
+   "num_steps": 10,
+   "use_amp": false
+  },
+  "video": {
+   "fps": 20,
+   "save": "all"
+  },
+  "name": "baseline_smolvla_libero",
+  "checkpoint": {
+   "repo_id": "lerobot/smolvla_libero",
+   "revision": "a24f1f380461b665158d52acd140152c79e8b36d",
+   "rename_map": {
+    "observation.images.image": "observation.images.camera1",
+    "observation.images.image2": "observation.images.camera2"
+   }
+  }
+ },
+ "policy_source": {
+  "repo_id": "lerobot/smolvla_libero",
+  "revision": "a24f1f380461b665158d52acd140152c79e8b36d",
+  "local_dir": "~/.cache/huggingface/hub/models--lerobot--smolvla_libero/snapshots/a24f1f380461b665158d52acd140152c79e8b36d",
+  "shipped_n_action_steps": 50,
+  "n_action_steps": 10,
+  "chunk_size": 50,
+  "num_steps": 10,
+  "use_amp": false,
+  "device": "cuda",
+  "rename_map": {
+   "observation.images.image": "observation.images.camera1",
+   "observation.images.image2": "observation.images.camera2"
+  }
+ },
+ "manifest": {
+  "created_utc": "2026-10-18T20:05:28+00:00",
+  "python": "3.12.12",
+  "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "packages": {
+   "lerobot": "0.6.1",
+   "torch": "2.11.0+cu128",
+   "torchvision": "0.26.0+cu128",
+   "transformers": "5.5.4",
+   "mujoco": "3.3.7",
+   "robosuite": "1.4.0",
+   "hf-libero": "0.1.4",
+   "bddl": "1.0.1",
+   "gymnasium": "1.4.0",
+   "numpy": "2.2.6",
+   "huggingface_hub": "1.33.0",
+   "datasets": "4.8.5",
+   "torchcodec": "0.11.1",
+   "safetensors": "0.8.0"
+  },
+  "lerobot_source": {
+   "url": "https://github.com/huggingface/lerobot.git",
+   "vcs_info": {
+    "vcs": "git",
+    "commit_id": "7e241bd630a3719a56157a497ce5d08f244784f1",
+    "requested_revision": "7e241bd630a3719a56157a497ce5d08f244784f1"
+   }
+  },
+  "gpu": {
+   "name": "NVIDIA GeForce RTX 4070 SUPER",
+   "cuda_runtime": "12.8",
+   "total_mem_gb": 12.9,
+   "driver": "610.88"
+  },
+  "mujoco_gl": "egl",
+  "hub_references": {
+   "lerobot/libero-assets (LIBERO meshes/textures)": "0b3ea86be5fe169d0fd036ae63d1070ec09e90f6",
+   "HuggingFaceTB/SmolVLM2-500M-Video-Instruct (tokenizer/VLM config)": "7b375e1b73b11138ff12fe22c8f2822d8fe03467"
+  }
+ }
+}

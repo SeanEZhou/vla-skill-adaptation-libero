@@ -1,0 +1,40 @@
+{
+ "policy": "baseline_smolvla_libero",
+ "per_task": {
+  "20": {
+   "instruction": "turn on the stove",
+   "successes": 0,
+   "n": 10,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.2775327998628892
+   ],
+   "mean_steps": 400.0,
+   "eval_wall_time_s": 480.7543712839979,
+   "inference_latency_mean_ms": 384.08723862753504
+  },
+  "46": {
+   "instruction": "pick up the alphabet soup and put it in the basket",
+   "successes": 5,
+   "n": 10,
+   "rate": 0.5,
+   "ci95": [
+    0.236593090512564,
+    0.7634069094874361
+   ],
+   "mean_steps": 277.8,
+   "eval_wall_time_s": 253.16198825800075,
+   "inference_latency_mean_ms": 383.9297032803249
+  }
+ },
+ "overall": {
+  "successes": 5,
+  "n": 20,
+  "rate": 0.25,
+  "ci95": [
+   0.11186170140766569,
+   0.468700877618744
+  ]
+ }
+}

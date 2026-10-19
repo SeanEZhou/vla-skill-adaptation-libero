@@ -1,0 +1,191 @@
+{
+ "suite": "libero_object",
+ "task_id": 0,
+ "task_name": "pick_up_the_alphabet_soup_and_place_it_in_the_basket",
+ "instruction": "pick up the alphabet soup and place it in the basket",
+ "n_init_states": 50,
+ "max_steps": 280,
+ "raw_observation": {
+  "pixels/image": {
+   "shape": [
+    256,
+    256,
+    3
+   ],
+   "dtype": "uint8",
+   "min": 0.0,
+   "max": 252.0
+  },
+  "pixels/image2": {
+   "shape": [
+    256,
+    256,
+    3
+   ],
+   "dtype": "uint8",
+   "min": 0.0,
+   "max": 255.0
+  },
+  "robot_state/eef/pos": {
+   "shape": [
+    3
+   ],
+   "dtype": "float64",
+   "min": -0.15255246384174243,
+   "max": 0.248447546081703
+  },
+  "robot_state/eef/quat": {
+   "shape": [
+    4
+   ],
+   "dtype": "float64",
+   "min": -0.02909065429600386,
+   "max": 0.999576644610012
+  },
+  "robot_state/eef/mat": {
+   "shape": [
+    3,
+    3
+   ],
+   "dtype": "float64",
+   "min": -0.9983101181100369,
+   "max": 0.9999994806502036
+  },
+  "robot_state/gripper/qpos": {
+   "shape": [
+    2
+   ],
+   "dtype": "float64",
+   "min": -0.03872217448306624,
+   "max": 0.03872339304334826
+  },
+  "robot_state/gripper/qvel": {
+   "shape": [
+    2
+   ],
+   "dtype": "float64",
+   "min": -0.0032696128418701746,
+   "max": 0.00325681930675613
+  },
+  "robot_state/joints/pos": {
+   "shape": [
+    7
+   ],
+   "dtype": "float64",
+   "min": -2.470763065836339,
+   "max": 2.2617951684793747
+  },
+  "robot_state/joints/vel": {
+   "shape": [
+    7
+   ],
+   "dtype": "float64",
+   "min": -0.02890500248276073,
+   "max": 0.03608627141874044
+  }
+ },
+ "policy_frame_before_policy_preprocessor": {
+  "action": "None",
+  "next.reward": "0.0",
+  "next.done": "False",
+  "next.truncated": "False",
+  "observation.images.image": {
+   "shape": [
+    1,
+    3,
+    256,
+    256
+   ],
+   "dtype": "float32",
+   "min": 0.0,
+   "max": 0.9882352948188782
+  },
+  "observation.images.image2": {
+   "shape": [
+    1,
+    3,
+    256,
+    256
+   ],
+   "dtype": "float32",
+   "min": 0.0,
+   "max": 1.0
+  },
+  "observation.state": {
+   "shape": [
+    1,
+    8
+   ],
+   "dtype": "float32",
+   "min": -0.15255247056484222,
+   "max": 3.1405670642852783
+  }
+ },
+ "action_space": {
+  "shape": [
+   7
+  ],
+  "low": [
+   -1.0,
+   -1.0,
+   -1.0,
+   -1.0,
+   -1.0,
+   -1.0,
+   -1.0
+  ],
+  "high": [
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0
+  ]
+ },
+ "controller": {
+  "name": "OperationalSpaceController",
+  "use_delta": true,
+  "control_freq": 20,
+  "input_min": [
+   -1.0,
+   -1.0,
+   -1.0,
+   -1.0,
+   -1.0,
+   -1.0
+  ],
+  "input_max": [
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0
+  ],
+  "output_min": [
+   -0.05,
+   -0.05,
+   -0.05,
+   -0.5,
+   -0.5,
+   -0.5
+  ],
+  "output_max": [
+   0.05,
+   0.05,
+   0.05,
+   0.5,
+   0.5,
+   0.5
+  ],
+  "control_dim": 6
+ },
+ "step_checks": {
+  "eef_drift_after_10_noops_m": 0.0006492837009171669,
+  "eef_dz_after_10_up_actions_m": 0.11749943333209206,
+  "expected_dz_upper_bound_m": 0.5,
+  "success_after_steps": false
+ }
+}

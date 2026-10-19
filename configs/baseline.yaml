@@ -1,0 +1,12 @@
+# Arm A: frozen pretrained checkpoint, no target-task training.
+name: baseline_smolvla_libero
+checkpoint:
+  repo_id: lerobot/smolvla_libero
+  # Immutable Hub commit ("Fix LIBERO checkpoint feature metadata", 2026-10-12).
+  revision: a24f1f380461b665158d52acd140152c79e8b36d
+  # The checkpoint was trained with cameras renamed to camera1/camera2. The saved preprocessor
+  # contains this map, but lerobot-eval 0.6.1 overrides it with an empty CLI default (#4578),
+  # so we always pass it explicitly and assert it matches the saved one.
+  rename_map:
+    observation.images.image: observation.images.camera1
+    observation.images.image2: observation.images.camera2
