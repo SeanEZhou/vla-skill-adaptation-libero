@@ -38,3 +38,4 @@ results/**/log_*.txt
 results/**/*.png
 !results/plots/*.png
 !results/smoke/*.png
+!results/dataset/*.png

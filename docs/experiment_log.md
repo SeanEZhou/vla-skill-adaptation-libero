@@ -81,3 +81,22 @@ failure. Claim to make: "not successful under our baseline evaluation", not "abs
 different scene layout) **0/10**. The pipeline produces successes on LIBERO-90, so the screening
 zeros are about the tasks, not a suite-specific bug. Identical language does not transfer across
 scenes for this checkpoint.
+
+## 2026-10-18 — Milestone 2 (dataset pipeline)
+
+* **Built our own dataset from the official HDF5** rather than using the third-party
+  `jesbu1/libero_90_lerobot`: replayed through our eval observation path (`scripts/prepare_dataset.py`),
+  so train frames equal eval frames bit for bit. The third-party set is used only as a cross-check:
+  50/50 episodes match by identical action sequences. Details: `docs/dataset.md`.
+* 50/50 demos kept, 5,027 frames. Split by episode: 45 train / 5 val (seed 0). Val is for offline
+  loss monitoring only; closed-loop eval stays on the 50 official init states.
+* Bug caught by a test: an exact-image alignment test failed on the wrist camera when replaying
+  float32 labels. Root cause: 3e-8 float32 rounding of actions shifts arm-mounted camera pixels.
+  Dataset confirmed exact (float64 replay is byte-identical on 103/103 frames); test fixed to replay
+  originals.
+* Frozen-checkpoint offline loss: 4.41 on the target task vs 0.068 on a training task.
+* **Normalization finding:** `lerobot-train` silently swaps in the fine-tuning dataset's stats.
+  Here that would rescale state inputs up to 10×. Decision (pending review): keep the checkpoint's
+  stats in Milestone 3.
+* Exit-gate forward pass at batch 8 peaked at 8.0 GB GPU memory (no grad). Training memory on
+  12 GB is the main Milestone 3 risk; measure before choosing batch size / freezing.

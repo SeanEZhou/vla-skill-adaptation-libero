@@ -97,7 +97,7 @@ Verified by `scripts/inspect_env.py` (`results/smoke/env_schema.json`) and unit 
 | 4 | State dims / units / normalization | PASS | section 3 frame-0 comparison, stats diff < 1e-7 |
 | 5 | Action dims / semantics | PASS | section 4 |
 | 6 | Chunk horizon / replanning / frequency / clipping | PASS | `configs/eval.yaml`, D3, D4 |
-| 7 | Dataset schema == policy input schema | PASS for `lerobot/libero`. LIBERO-90 data (different keys) is a Milestone 2 item. | `dataset_check_*.json` |
+| 7 | Dataset schema == policy input schema | PASS for `lerobot/libero` and for our target-task dataset (built through the eval observation path, `docs/dataset.md`) | `dataset_check_*.json`, `tests/test_temporal_alignment.py` |
 | 8 | Success detection with known-good expert rollouts | PASS | `scripts/replay_demos.py`: 48/50 original HDF5 demos succeed when replayed open-loop (2 drift); the no-op negative control never succeeds (`results/smoke/replay/replay_libero_object_t00.json`) |
 | 9 | Single episode reset/render/step/record | PASS | `results/smoke/render_*.png`, `results/smoke/rollout_libero_object/videos/` |
 | 10 | Non-degenerate actions, full rollout, deterministic seeds | PASS | 2/2 smoke rollouts succeed; seeded resets reproduce layouts exactly (same seed gives identical qpos, different seeds move objects ~2 cm) |
@@ -124,10 +124,10 @@ Verified by `scripts/inspect_env.py` (`results/smoke/env_schema.json`) and unit 
 2. **Checkpoint that demonstrably runs:** `lerobot/smolvla_libero@a24f1f38` on LIBERO-Object
    (92%, 50 episodes) under the settings above.
 3. **Features and normalization:** sections 3-4. MEAN_STD for state and action using `lerobot/libero` stats, identity for images.
-4. **LIBERO demos -> LeRobot without losing time alignment:** *Milestone 2.* Plan: use the LeRobot
-   LIBERO-90 conversion (OpenVLA regeneration: 256x256, no-op actions removed, failed replays
-   dropped, images upright) and verify it against the original HDF5 (state/action match, frame
-   alignment) before training.
+4. **LIBERO demos -> LeRobot without losing time alignment:** replay each HDF5 demo from its start
+   state through our eval observation path (settle, drop no-ops, record-then-step, keep successes).
+   Verified by byte-exact re-simulation and by a 50/50 action-identical match with an independent
+   conversion (`docs/dataset.md`).
 5. **Task with low baseline and enough expert data:** chosen by pre-registered screening; see `docs/experiment_log.md`.
 6. **Cheapest training setup:** *Milestone 3.* Inference uses ~1 GB VRAM. Full fine-tuning of the
    450M model with batch 32 likely fits in 12 GB with bf16 and a frozen vision encoder; this must be measured.

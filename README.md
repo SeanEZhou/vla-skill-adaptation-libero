@@ -17,8 +17,8 @@ initial states, before vs. after fine-tuning.
 |---|---|
 | 0. Environment and checkpoint audit: pinned stack, interface validation, success-detector check | ✅ |
 | 1. Task selection and frozen baseline | ✅ |
-| 2. Demonstration dataset pipeline | ⏳ next |
-| 3. Fine-tuning | — |
+| 2. Demonstration dataset pipeline: 50 demos regenerated and verified | ✅ |
+| 3. Fine-tuning | ⏳ next |
 | 4. Paired before/after evaluation, plus a forgetting check on known tasks | — |
 
 ## Experimental design
@@ -63,6 +63,13 @@ documented with evidence in [docs/compatibility.md](docs/compatibility.md):
 - **Control rate.** Dataset metadata says 10 Hz and the train config 30 Hz, but the simulator runs
   at 20 Hz. With delta actions, a wrong rate means ~0% success.
 - **Physics version.** MuJoCo ≥ 3.4 breaks stored LIBERO initial states, so it is pinned to 3.3.7.
+- **Training data built through the eval code path.** The 50 task-56 demos are replayed from the
+  official HDF5 through the same observation code used at eval. Stored frames are byte-identical to
+  a re-simulation, and all 50 episodes match an independent third-party conversion action for action
+  ([docs/dataset.md](docs/dataset.md)).
+- **Silent normalization swap.** `lerobot-train` replaces the checkpoint's normalization stats with
+  the fine-tuning set's. For a single task that rescales state inputs up to 10×, so we keep the
+  checkpoint's stats.
 - **Verification beyond shape checks.** Frame-0 robot state from the dataset vs. the live simulator
   (agree within mm); expert-demo replay to validate the success detector (48/50 and 49/50, with a
   no-op negative control); qpos-level train/eval leakage check.
@@ -91,7 +98,8 @@ revisions. Videos are written locally per episode and are not committed.
 ```
 configs/            eval settings shared by all arms; checkpoint pin; frozen task + eval set
 src/vla_sim_poc/    env wrapper, observation/action adapters, policy loader, rollout loop, statistics
-scripts/            inspect_{env,checkpoint,dataset}, replay_demos, evaluate, summarize_results
+scripts/            inspect_*, replay_demos, prepare_dataset, crosscheck_reference_dataset,
+                    check_training_batch, plot_dataset_episode, evaluate, summarize_results
 tests/              adapter/metric unit tests + real-checkpoint interface tests
 docs/               compatibility audit · experiment log (decisions, pre-registration) · results
 results/            per-episode JSONL, summaries, plots
@@ -103,4 +111,5 @@ results/            per-episode JSONL, summaries, plots
   discrepancies found, and the evidence for each gate
 - [docs/experiment_log.md](docs/experiment_log.md): design decisions, pre-registered task selection,
   screening, controls
+- [docs/dataset.md](docs/dataset.md): target-task dataset build, verification, normalization analysis
 - [docs/results.md](docs/results.md): baseline metrics and failure analysis

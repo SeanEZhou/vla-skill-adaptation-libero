@@ -19,6 +19,7 @@ from pathlib import Path
 import numpy as np
 
 from vla_sim_poc.config import PROJECT_ROOT, load_config
+from vla_sim_poc.dataset import episodes_for_task
 from vla_sim_poc.environment import EpisodeSpec, TaskEnv
 from vla_sim_poc.observation_adapter import make_env_preprocessor, raw_to_policy_frame
 from vla_sim_poc.video import save_png
@@ -26,18 +27,6 @@ from vla_sim_poc.video import save_png
 
 def to_hwc_uint8(chw) -> np.ndarray:
     return (chw.permute(1, 2, 0).numpy() * 255).round().astype(np.uint8)
-
-
-def episodes_for_task(repo_id: str, revision: str, task_index: int) -> list[int]:
-    """Episode -> task mapping from the (small) data parquet files; episode metadata lacks it."""
-    import pandas as pd
-    from huggingface_hub import snapshot_download
-
-    root = Path(snapshot_download(repo_id, repo_type="dataset", revision=revision, allow_patterns=["data/*"]))
-    df = pd.concat(pd.read_parquet(p, columns=["episode_index", "task_index"]) for p in sorted(root.glob("data/*/*.parquet")))
-    per_ep = df.groupby("episode_index")["task_index"].agg(["min", "max"])
-    assert (per_ep["min"] == per_ep["max"]).all(), "an episode spans several tasks"
-    return sorted(int(e) for e in per_ep.index[per_ep["min"] == task_index])
 
 
 def main():
