@@ -43,3 +43,51 @@ Supporting context (screening, not final results):
 **Interpretation:** under our evaluation the checkpoint does not perform this skill (0/50, true rate
 <= 7.1% at 95% confidence). This does **not** show the skill is absent from pretraining. It is the
 starting point for Milestone 3: can 50 expert demos move this number?
+
+## Arm B1: action-expert-only fine-tune (Milestones 3-4)
+
+**Training** (`configs/train_expert_only.yaml`, `scripts/train.py`, logs in `results/train/expert_only_s0/`):
+init `smolvla_libero@a24f1f38`; VLM + vision encoder frozen, 99.9M of 450M parameters trained;
+45 demos (4,517 frames); batch 32; 6,000 steps; SmolVLA AdamW/cosine presets (lr 1e-4, warmup 200);
+checkpoint normalization stats. 122 min on the local RTX 4070 SUPER, 8.3 GB peak, **$0**.
+
+![Training](../results/plots/training_expert_only.png)
+
+Held-out-demo loss bottoms out at step ~250 (0.70) and then rises to 2.7 while train loss keeps
+falling: the expert memorises 45 demos. Closed-loop success on the selection layouts nevertheless
+stays at 19-20/20 for every checkpoint, a live example of offline loss and rollout success
+disagreeing. Selection (pre-registered): steps 1000/4000/6000 tie at 20/20; the lowest held-out loss
+picks **step 1000**.
+
+**Frozen evaluation** (selected checkpoint, same 50 official init states, seed and settings as arm A):
+
+| | Arm A: frozen baseline | **Arm B1: expert-only fine-tune** |
+|---|---|---|
+| Target task 56 (50 held-out states) | 0/50 = 0% (0-7%) | **45/50 = 90% (79-96%)** |
+| Paired change | | **+90 pp** (bootstrap 95% CI +80 to +98); 45 failure→success, 0 success→failure; exact McNemar p = 6e-14 |
+| Retention: LIBERO-Object (10 tasks x 5 states) | 46/50 = 92% (81-97%) | **0/50 = 0% (0-7%)** |
+| Paired change (retention) | | **−92 pp** (−98 to −84); 46 success→failure, 0 reverse; p = 3e-14 |
+| Successful-episode length | — | mean 85 steps (70-106), 4.3 s; demos average 100 frames |
+| Gripper switches / episode (target) | 26.6 | 2.1 on successes, 33 on failures |
+| Chunk inference latency | 393 ms | 358 ms (mean), 460 ms p95 |
+
+![Before/after](../results/plots/before_after_expert_only.png)
+
+**Target-task failures (5/50; init states 17, 24, 33, 34, 46):** all `no_grasp`. The arm now goes
+to the butter (the wrist camera shows the box at close range), but the grasp fails: the box is tipped
+or slips, and the arm either keeps re-attempting with the gripper toggling or carries an empty
+gripper to the tray. This is a qualitatively different failure from the baseline's `missed_object`.
+Fine-tuning fixed target selection and motion; residual errors are grasp execution.
+
+**Catastrophic forgetting:** on LIBERO-Object scenes the fine-tuned policy performs a stereotyped
+forward reach toward the middle of the table regardless of the named object, with gripper dithering
+(28 switches/episode vs 4.3 before). The VLM was frozen, so the visual and language features are
+unchanged; the action expert has learned to ignore them. Hypothesis (untested): with a single
+scene and a single instruction in training, the expert leans on the proprioceptive state, which
+differs sharply between scenes (EEF height ~0.26 m on the LIBERO-Object floor vs ~0.57 m on this
+tabletop).
+
+**Interpretation:** 45 demonstrations and 2 GPU-hours teach the frozen-perception model this skill
+(0% → 90%), so updating only the action expert is enough to *acquire* the skill. Training on the
+target task alone **replaces** the previous competence rather than adding to it. Freezing the VLM
+does not protect against this, because the forgetting happens in the action expert itself.

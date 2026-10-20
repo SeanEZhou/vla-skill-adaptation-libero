@@ -18,8 +18,8 @@ initial states, before vs. after fine-tuning.
 | 0. Environment and checkpoint audit: pinned stack, interface validation, success-detector check | ✅ |
 | 1. Task selection and frozen baseline | ✅ |
 | 2. Demonstration dataset pipeline: 50 demos regenerated and verified | ✅ |
-| 3. Fine-tuning | ⏳ next |
-| 4. Paired before/after evaluation, plus a forgetting check on known tasks | — |
+| 3. Fine-tuning: action expert only, local GPU | ✅ |
+| 4. Paired before/after evaluation + forgetting check | ✅ expert-only arm |
 
 ## Experimental design
 
@@ -33,22 +33,33 @@ selection rule written down *before* screening:
 The final eval set is the task's **50 official LIBERO initial states**. They were never used for
 task screening, and they are verified disjoint from the expert demonstrations' start states.
 
-## Results so far
+## Results
 
-| Evaluation | Success (Wilson 95% CI) |
-|---|---|
-| In-distribution check: LIBERO-Object, 10 tasks × 5 states | **46/50 = 92%** (81–97%) |
-| Screening: 15 unseen LIBERO-90 tasks × 10 sampled layouts | 5/150 = 3% (1–8%) |
-| **Frozen baseline, target task, 50 held-out states** | **0/50 = 0%** (0–7.1%) |
+All numbers are closed-loop success in simulation with Wilson 95% CIs. Before/after comparisons are
+**paired on identical initial states**.
 
-![Screening results](results/plots/screening_libero_90.png)
+| Evaluation | Before (`smolvla_libero`) | After (action expert fine-tuned on 45 demos) |
+|---|---|---|
+| **Target: LIBERO-90 task 56, 50 held-out states** | 0/50 = 0% (0–7%) | **45/50 = 90% (79–96%)**, +90 pp, McNemar p = 6e-14 |
+| Retention: LIBERO-Object, 10 known tasks × 5 states | 46/50 = 92% (81–97%) | **0/50 = 0%** (catastrophic forgetting) |
 
-**Baseline failure mode:** the arm reaches for familiar training objects (the ketchup and soup
-cans), never approaches the butter or the tray, and toggles the gripper ~27 times per episode
-(vs. ~4 on known tasks). Actions are well-formed (0.02% saturation), so this is a grounding /
-generalization failure, not an interface bug. Two LIBERO-90 controls back this up: a near-duplicate
-of a training task scores 5/10, while a *word-for-word* training instruction in a different scene
-scores 0/10.
+![Before and after fine-tuning](results/plots/before_after_expert_only.png)
+
+- **The skill is learnable cheaply.** Updating only the 100M-parameter action expert (VLM frozen)
+  on 45 demos for 2 GPU-hours on an RTX 4070 SUPER ($0) takes the target task from 0% to 90%.
+- **Failure modes change in kind.** The baseline reaches for familiar training objects
+  (`missed_object`, gripper toggling ~27×/episode). The fine-tuned policy goes to the butter and
+  succeeds in ~4.3 s with ~2 gripper switches; its 5 failures are all slipped grasps (`no_grasp`).
+- **Single-task fine-tuning overwrites old skills, even with the VLM frozen.** On known scenes the
+  fine-tuned expert performs one stereotyped reach regardless of the instruction. Freezing
+  perception does not prevent forgetting in the action head.
+- **Offline loss is a poor guide.** Held-out-demo loss is lowest at step 250 and rises 4× by
+  step 6000, while closed-loop success stays at 95–100% throughout
+  ([training curves](results/plots/training_expert_only.png)).
+
+Context: the in-distribution check (92% on LIBERO-Object) validates the pipeline. Screening 15 unseen
+LIBERO-90 tasks gave 5/150, and task 56 was then chosen by a selection rule written before
+screening. Details: [docs/results.md](docs/results.md), [docs/experiment_log.md](docs/experiment_log.md).
 
 ## Engineering findings
 
@@ -86,7 +97,14 @@ uv run python scripts/evaluate.py --suite libero_object --task-ids 0-9 --init-st
 # frozen baseline on the target task
 uv run python scripts/evaluate.py --suite libero_90 --task-ids 56 --init-states 0-49 \
     --out results/baseline/libero_90_t56
-uv run python scripts/summarize_results.py --arm baseline=results/baseline/libero_90_t56
+# build the target-task dataset from the official LIBERO demos, then fine-tune the action expert
+uv run python scripts/prepare_dataset.py
+uv run python scripts/train.py --config configs/train_expert_only.yaml
+# evaluate the selected checkpoint on the same 50 states, and on the known suite (forgetting)
+uv run python scripts/evaluate.py --configs eval.yaml finetuned_expert_only.yaml \
+    --suite libero_90 --task-ids 56 --init-states 0-49 --out results/finetuned/expert_only_s0/libero_90_t56
+uv run python scripts/summarize_results.py --arm baseline=results/baseline/libero_90_t56 \
+    --arm finetuned=results/finetuned/expert_only_s0/libero_90_t56
 ```
 
 Every eval directory holds per-episode records (`episodes.jsonl`: init state, success, steps,
@@ -98,8 +116,8 @@ revisions. Videos are written locally per episode and are not committed.
 ```
 configs/            eval settings shared by all arms; checkpoint pin; frozen task + eval set
 src/vla_sim_poc/    env wrapper, observation/action adapters, policy loader, rollout loop, statistics
-scripts/            inspect_*, replay_demos, prepare_dataset, crosscheck_reference_dataset,
-                    check_training_batch, plot_dataset_episode, evaluate, summarize_results
+scripts/            data: prepare_dataset, crosscheck_reference_dataset, check_training_batch, replay_demos
+                    train, evaluate, summarize_results, plot_*; inspect_* (M0 audit)
 tests/              adapter/metric unit tests + real-checkpoint interface tests
 docs/               compatibility audit · experiment log (decisions, pre-registration) · results
 results/            per-episode JSONL, summaries, plots

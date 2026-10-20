@@ -1,0 +1,7 @@
+{
+ "steps": 6000,
+ "wall_time_min": 122.5212978794,
+ "peak_gpu_mem_gb": 8.263574016,
+ "gpu": "NVIDIA GeForce RTX 4070 SUPER",
+ "cloud_cost_usd": 0.0
+}

@@ -1,0 +1,10 @@
+# Arm B1: action-expert-only fine-tune, checkpoint selected by the pre-registered protocol
+# (docs/experiment_log.md): steps 1000/4000/6000 tied at 20/20 on selection seeds 20000-20019;
+# tie broken by lowest held-out-episode loss -> step 1000.
+name: finetuned_expert_only_s0_step001000
+checkpoint:
+  repo_id: outputs/train/expert_only_s0/checkpoints/001000   # local (git-ignored), from scripts/train.py
+  revision: null
+  rename_map:
+    observation.images.image: observation.images.camera1
+    observation.images.image2: observation.images.camera2

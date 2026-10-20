@@ -35,6 +35,7 @@ results/**/*.mp4
 results/**/*.gif
 results/**/*.npy
 results/**/log_*.txt
+*.log
 results/**/*.png
 !results/plots/*.png
 !results/smoke/*.png

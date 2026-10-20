@@ -100,3 +100,47 @@ scenes for this checkpoint.
   stats in Milestone 3.
 * Exit-gate forward pass at batch 8 peaked at 8.0 GB GPU memory (no grad). Training memory on
   12 GB is the main Milestone 3 risk; measure before choosing batch size / freezing.
+
+## 2026-10-19 — Milestone 3 (fine-tuning), arm B1: action expert only
+
+Memory/speed probe (real fwd+bwd+AdamW steps, task-56 data, RTX 4070 SUPER 12 GB, WSL2):
+
+| trainable | params | batch | peak GB | s/step (GPU only) |
+|---|---|---|---|---|
+| action expert only | 100M | 8 / 32 | 3.1 / 8.3 | 0.29 / 0.60 |
+| all but vision encoder | 307M | 16 | 6.4 | 0.43 |
+| everything | 393M | 8 / 16 / 32 | 9.6 / 16.5 / OOM | 0.47 / **6.8** / - |
+
+Full fine-tuning at batch 16 "fits" only because the WSL2 driver silently spills to system RAM:
+15x slower instead of an OOM. Training memory must be checked against the physical 12 GB, not just
+"did it crash".
+
+Decision (user): train the **action expert only** first (SmolVLA's default fine-tuning recipe; VLM
+and vision encoder frozen), batch 32, 6,000 steps, checkpoint normalization stats, SmolVLA
+optimizer/scheduler presets (`configs/train_expert_only.yaml`, `scripts/train.py`). Full fine-tuning
+is optional, only if expert-only is insufficient.
+
+Engineering note: data loading was the bottleneck (175 ms per sample: 2 PNG decodes plus a 50-step
+action query); 4 workers gave 1.5 s/step, 8 workers make it GPU-bound.
+
+**Checkpoint selection protocol (pre-registered before any fine-tuned rollout):**
+* Candidates: checkpoints at steps 1000, 2000, 4000, 6000.
+* Selection set: 20 **seeded sampled layouts**, seeds 20000-20019 (disjoint from screening seeds
+  10000-10009 and from the 50 official init states).
+* Rule: highest selection-set success. Ties go to the lower held-out-episode validation loss.
+* Only the selected checkpoint is evaluated on the frozen set (official init states 0-49, seed
+  1000, same `configs/eval.yaml`), plus the forgetting check (libero_object tasks 0-9 x init 0-4,
+  paired with the 46/50 baseline).
+
+### Arm B1 results (2026-10-19)
+
+* Training: 6,000 steps, 122 min, 8.3 GB peak, $0 (local). Held-out-demo loss is minimal at step
+  ~250 (0.70) and rises to 2.72 by 6,000; train loss reaches 0.041.
+* Selection (seeds 20000-20019): step 1000 20/20, 2000 19/20, 4000 20/20, 6000 20/20. Tie broken
+  by held-out loss: **step 1000** (1.17 vs 2.49 / 2.72). Config: `configs/finetuned_expert_only.yaml`.
+* Frozen eval, task 56, init 0-49: **45/50 (90%)** vs baseline 0/50; McNemar p = 6e-14. Failures
+  all `no_grasp` (videos reviewed for all 5).
+* Retention, LIBERO-Object tasks 0-9 x init 0-4: **0/50** vs 46/50 before. Catastrophic forgetting
+  despite the frozen VLM.
+* Data-loading note: inference latency during selection runs was inflated (540-780 ms) by training
+  sharing the GPU; the frozen eval was run alone (358 ms).

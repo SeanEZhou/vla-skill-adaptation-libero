@@ -1,0 +1,38 @@
+# Arm B1: fine-tune only SmolVLA's action expert on the target-task demos.
+# Initialization = the frozen baseline checkpoint (configs/baseline.yaml), so the only change is
+# the training data + which parameters are allowed to move.
+name: finetune_expert_only
+
+init_checkpoint:
+  repo_id: lerobot/smolvla_libero
+  revision: a24f1f380461b665158d52acd140152c79e8b36d
+  rename_map:
+    observation.images.image: observation.images.camera1
+    observation.images.image2: observation.images.camera2
+
+dataset:
+  root: data/lerobot/libero90_t56
+  repo_id: local/libero90_t56_butter_tray
+  split: data/lerobot/libero90_t56/vla_sim_poc/split.json   # 45 train / 5 val episodes
+
+trainable:
+  # SmolVLA's default fine-tuning recipe: VLM (incl. vision encoder) frozen, action expert +
+  # state/action projections trained (~100M of 450M parameters).
+  freeze_vision_encoder: true
+  train_expert_only: true
+
+# Keep the checkpoint's MEAN_STD stats (40-task lerobot/libero) for state and action.
+# lerobot-train would replace them with this dataset's stats (state std up to 10x smaller).
+normalization: checkpoint
+
+training:
+  steps: 6000               # ~43 epochs over 4.5k train frames at batch 32
+  batch_size: 32            # matches smolvla_libero's own training
+  num_workers: 8            # 175 ms/sample to load (PNG decode + 50-action query); 4 workers starve the GPU
+  seed: 0
+  # Optimizer/scheduler: SmolVLA preset (AdamW lr 1e-4, betas 0.9/0.95, grad clip 10, cosine decay
+  # to 2.5e-6). LeRobot auto-scales warmup/decay to the run length (warmup 200, decay 6000).
+  log_every: 50
+  val_every: 250
+  save_steps: [1000, 2000, 4000, 6000]
+  output_dir: outputs/train/expert_only_s0
