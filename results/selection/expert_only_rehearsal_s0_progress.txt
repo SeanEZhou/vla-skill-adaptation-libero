@@ -1,0 +1,4 @@
+step 001000 target: [overall] 20/20 = 100.0% (95% CI 83.9%-100.0%)  retention: [overall] 19/20 = 95.0% (95% CI 76.4%-99.1%)
+step 002000 target: [overall] 20/20 = 100.0% (95% CI 83.9%-100.0%)  retention: [overall] 18/20 = 90.0% (95% CI 69.9%-97.2%)
+step 004000 target: [overall] 20/20 = 100.0% (95% CI 83.9%-100.0%)  retention: [overall] 18/20 = 90.0% (95% CI 69.9%-97.2%)
+step 006000 target: [overall] 20/20 = 100.0% (95% CI 83.9%-100.0%)  retention: [overall] 20/20 = 100.0% (95% CI 83.9%-100.0%)

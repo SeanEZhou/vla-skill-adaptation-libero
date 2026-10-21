@@ -1,0 +1,10 @@
+# Arm B2: action-expert-only fine-tune with rehearsal (50% lerobot/libero), checkpoint selected by the
+# pre-registered protocol (docs/experiment_log.md): target+retention selection successes
+# 39 / 38 / 38 / 40 at steps 1000 / 2000 / 4000 / 6000 -> step 6000.
+name: finetuned_expert_only_rehearsal_s0_step006000
+checkpoint:
+  repo_id: outputs/train/expert_only_rehearsal_s0/checkpoints/006000   # local (git-ignored)
+  revision: null
+  rename_map:
+    observation.images.image: observation.images.camera1
+    observation.images.image2: observation.images.camera2

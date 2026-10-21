@@ -1,0 +1,27 @@
+{
+ "policy": "ft_expert_rehearsal_s0_step001000",
+ "per_task": {
+  "56": {
+   "instruction": "pick up the butter and put it in the tray",
+   "successes": 19,
+   "n": 20,
+   "rate": 0.95,
+   "ci95": [
+    0.763868806553258,
+    0.9911185511992047
+   ],
+   "mean_steps": 105.5,
+   "eval_wall_time_s": 287.35573525599966,
+   "inference_latency_mean_ms": 471.5446254508985
+  }
+ },
+ "overall": {
+  "successes": 19,
+  "n": 20,
+  "rate": 0.95,
+  "ci95": [
+   0.763868806553258,
+   0.9911185511992047
+  ]
+ }
+}

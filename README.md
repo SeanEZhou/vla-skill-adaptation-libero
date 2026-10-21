@@ -18,8 +18,8 @@ initial states, before vs. after fine-tuning.
 | 0. Environment and checkpoint audit: pinned stack, interface validation, success-detector check | ✅ |
 | 1. Task selection and frozen baseline | ✅ |
 | 2. Demonstration dataset pipeline: 50 demos regenerated and verified | ✅ |
-| 3. Fine-tuning: action expert only, local GPU | ✅ |
-| 4. Paired before/after evaluation + forgetting check | ✅ expert-only arm |
+| 3. Fine-tuning: action expert only, without and with rehearsal (local GPU, $0) | ✅ |
+| 4. Paired before/after evaluation + forgetting check | ✅ |
 
 ## Experimental design
 
@@ -35,27 +35,29 @@ task screening, and they are verified disjoint from the expert demonstrations' s
 
 ## Results
 
-All numbers are closed-loop success in simulation with Wilson 95% CIs. Before/after comparisons are
-**paired on identical initial states**.
+All numbers are closed-loop success in simulation with Wilson 95% CIs. Every arm is evaluated **on
+identical initial states**, and comparisons are paired.
 
-| Evaluation | Before (`smolvla_libero`) | After (action expert fine-tuned on 45 demos) |
-|---|---|---|
-| **Target: LIBERO-90 task 56, 50 held-out states** | 0/50 = 0% (0–7%) | **45/50 = 90% (79–96%)**, +90 pp, McNemar p = 6e-14 |
-| Retention: LIBERO-Object, 10 known tasks × 5 states | 46/50 = 92% (81–97%) | **0/50 = 0%** (catastrophic forgetting) |
+| Evaluation | Before (`smolvla_libero`) | Fine-tuned: action expert only | **Fine-tuned: action expert + rehearsal** |
+|---|---|---|---|
+| **Target: LIBERO-90 task 56, 50 held-out states** | 0/50 = 0% | 45/50 = 90% | **46/50 = 92%** (81–97%) |
+| **Retention: LIBERO-Object, 10 known tasks × 5 states** | 46/50 = 92% | 0/50 = 0% | **48/50 = 96%** (87–99%) |
 
-![Before and after fine-tuning](results/plots/before_after_expert_only.png)
+![Before and after fine-tuning](results/plots/before_after.png)
 
-- **The skill is learnable cheaply.** Updating only the 100M-parameter action expert (VLM frozen)
-  on 45 demos for 2 GPU-hours on an RTX 4070 SUPER ($0) takes the target task from 0% to 90%.
+- **New skill, old skills kept.** Fine-tuning only the 100M-parameter action expert (VLM frozen)
+  on 45 demos, with 50% of each batch drawn from the checkpoint's original training data, takes the
+  new task from 0% to 92% (+92 pp, McNemar p = 3e-14). Retention on known tasks shows no measurable
+  change. Each run takes 1.5–2 GPU-hours on an RTX 4070 SUPER ($0).
+- **Without rehearsal, the model forgets.** Training on the new task alone also reaches 90%, but
+  known-task success collapses from 92% to 0%, even with the VLM frozen. The forgetting happens in
+  the action expert and is caused by the training distribution, not by which parameters are trained.
 - **Failure modes change in kind.** The baseline reaches for familiar training objects
-  (`missed_object`, gripper toggling ~27×/episode). The fine-tuned policy goes to the butter and
-  succeeds in ~4.3 s with ~2 gripper switches; its 5 failures are all slipped grasps (`no_grasp`).
-- **Single-task fine-tuning overwrites old skills, even with the VLM frozen.** On known scenes the
-  fine-tuned expert performs one stereotyped reach regardless of the instruction. Freezing
-  perception does not prevent forgetting in the action head.
-- **Offline loss is a poor guide.** Held-out-demo loss is lowest at step 250 and rises 4× by
-  step 6000, while closed-loop success stays at 95–100% throughout
-  ([training curves](results/plots/training_expert_only.png)).
+  (`missed_object`, ~27 gripper toggles/episode). Fine-tuned policies go to the butter and finish in
+  ~4.5 s with ~2 toggles; their remaining failures are slipped grasps (`no_grasp`).
+- **Offline loss is a poor guide.** Held-out-demo loss is lowest at step 250 and then rises, while
+  closed-loop success stays at 95–100% ([training curves](results/plots/training_expert_only_rehearsal.png)).
+  Checkpoints are chosen by pre-registered closed-loop selection on episodes disjoint from the test set.
 
 Context: the in-distribution check (92% on LIBERO-Object) validates the pipeline. Screening 15 unseen
 LIBERO-90 tasks gave 5/150, and task 56 was then chosen by a selection rule written before
@@ -78,6 +80,9 @@ documented with evidence in [docs/compatibility.md](docs/compatibility.md):
   official HDF5 through the same observation code used at eval. Stored frames are byte-identical to
   a re-simulation, and all 50 episodes match an independent third-party conversion action for action
   ([docs/dataset.md](docs/dataset.md)).
+- **Robust, resumable training.** Training saves a resumable checkpoint every 30 min, at every
+  eval checkpoint, on SIGTERM/Ctrl+C, and on crashes. A real crash (a torchcodec decoder cached in a
+  data-loader worker going bad after many random seeks) is now retried with a fresh decoder.
 - **Silent normalization swap.** `lerobot-train` replaces the checkpoint's normalization stats with
   the fine-tuning set's. For a single task that rescales state inputs up to 10×, so we keep the
   checkpoint's stats.
@@ -99,12 +104,13 @@ uv run python scripts/evaluate.py --suite libero_90 --task-ids 56 --init-states 
     --out results/baseline/libero_90_t56
 # build the target-task dataset from the official LIBERO demos, then fine-tune the action expert
 uv run python scripts/prepare_dataset.py
-uv run python scripts/train.py --config configs/train_expert_only.yaml
+uv run python scripts/train.py --config configs/train_expert_only_rehearsal.yaml   # or train_expert_only.yaml
+#   graceful stop: kill -TERM $(cat outputs/train/<run>/train.pid);  continue: add --resume
 # evaluate the selected checkpoint on the same 50 states, and on the known suite (forgetting)
-uv run python scripts/evaluate.py --configs eval.yaml finetuned_expert_only.yaml \
-    --suite libero_90 --task-ids 56 --init-states 0-49 --out results/finetuned/expert_only_s0/libero_90_t56
+uv run python scripts/evaluate.py --configs eval.yaml finetuned_expert_only_rehearsal.yaml \
+    --suite libero_90 --task-ids 56 --init-states 0-49 --out results/finetuned/expert_only_rehearsal_s0/libero_90_t56
 uv run python scripts/summarize_results.py --arm baseline=results/baseline/libero_90_t56 \
-    --arm finetuned=results/finetuned/expert_only_s0/libero_90_t56
+    --arm finetuned=results/finetuned/expert_only_rehearsal_s0/libero_90_t56
 ```
 
 Every eval directory holds per-episode records (`episodes.jsonl`: init state, success, steps,

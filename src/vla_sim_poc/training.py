@@ -11,14 +11,72 @@ import torch
 ACTION_KEY = "action"
 
 
+class SingleFrameImages(torch.utils.data.Dataset):
+    """Give every dataset the same image layout. With one observation step, LeRobot returns
+    image-backed frames as (1, C, H, W) but video-backed frames as (C, H, W); mixing the two in a
+    batch fails to collate. Drop the singleton time dim (SmolVLA takes the last frame of a 5-D tensor
+    anyway, so values are unchanged)."""
+
+    def __init__(self, ds):
+        self.ds = ds
+        self.meta = ds.meta
+        self.hf_dataset = ds.hf_dataset
+
+    def __len__(self) -> int:
+        return len(self.ds)
+
+    def __getitem__(self, i):
+        item = self.ds[i]
+        for k in self.meta.camera_keys:
+            if item[k].ndim == 4 and item[k].shape[0] == 1:
+                item[k] = item[k][0]
+        return item
+
+
+def reset_video_decoders() -> None:
+    """Drop LeRobot's per-process cache of torchcodec decoders so the next read opens a fresh one."""
+    from lerobot.datasets import video_utils
+
+    video_utils._default_decoder_cache.clear()
+
+
+class RetryOnDecodeError(torch.utils.data.Dataset):
+    """Training-time guard for video-decode failures (torchcodec "Could not push packet to decoder").
+    The failure is state-dependent, not bad data: every file decodes cleanly with ffmpeg, and the
+    failing frame decodes fine in a fresh process. A *cached* decoder in a long-lived worker gets
+    into a bad state after many random seeks and keeps failing. So: reset the decoder cache and retry
+    the same sample; if it still fails, substitute a random other sample and log it."""
+
+    def __init__(self, ds, retries: int = 3, seed: int = 0):
+        self.ds, self.retries = ds, retries
+        self.rng = np.random.default_rng(seed)
+
+    def __len__(self) -> int:
+        return len(self.ds)
+
+    def __getitem__(self, i):
+        for attempt in range(self.retries + 1):
+            try:
+                return self.ds[i]
+            except RuntimeError as e:
+                reset_video_decoders()
+                j = i if attempt < self.retries else int(self.rng.integers(len(self.ds)))
+                print(f"[data] decode error on sample {i} (attempt {attempt + 1}): {str(e)[:120]}; "
+                      f"{'retrying' if j == i else f'substituting sample {j}'}", flush=True)
+                i = j
+        return self.ds[i]
+
+
 def make_dataset(repo_id: str, root: str | Path | None, episodes: list[int] | None, policy_cfg, revision=None):
     """LeRobotDataset yielding (frame t, actions t..t+chunk-1) samples, as SmolVLA trains on."""
     from lerobot.datasets.factory import resolve_delta_timestamps
     from lerobot.datasets.lerobot_dataset import LeRobotDataset, LeRobotDatasetMetadata
 
     meta = LeRobotDatasetMetadata(repo_id, root=root, revision=revision)
-    return LeRobotDataset(repo_id, root=root, revision=revision, episodes=episodes,
-                          delta_timestamps=resolve_delta_timestamps(policy_cfg, meta))
+    if policy_cfg.n_obs_steps != 1:
+        raise NotImplementedError("SingleFrameImages assumes n_obs_steps == 1")
+    return SingleFrameImages(LeRobotDataset(repo_id, root=root, revision=revision, episodes=episodes,
+                                            delta_timestamps=resolve_delta_timestamps(policy_cfg, meta)))
 
 
 @torch.no_grad()

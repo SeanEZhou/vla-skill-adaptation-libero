@@ -91,3 +91,44 @@ tabletop).
 (0% → 90%), so updating only the action expert is enough to *acquire* the skill. Training on the
 target task alone **replaces** the previous competence rather than adding to it. Freezing the VLM
 does not protect against this, because the forgetting happens in the action expert itself.
+
+## Arm B2: action-expert-only fine-tune + rehearsal
+
+Identical to B1 except that each batch mixes the 45 target demos with the checkpoint's own original
+training data (`lerobot/libero`, 40 tasks), 50% target frames in expectation
+(`configs/train_expert_only_rehearsal.yaml`). 6,000 steps, 88 min locally, 8.3 GB peak, **$0**.
+Logs: `results/train/expert_only_rehearsal_s0/`.
+
+![Training with rehearsal](../results/plots/training_expert_only_rehearsal.png)
+
+The known-task loss rises from 0.085 to 0.21 in the first 250 steps (early disruption), then recovers
+to 0.11 as rehearsal anchors the old behaviour. Held-out-demo loss still drifts up (memorisation of
+45 demos) but less than in B1 (1.72 vs 2.72 at step 6,000). Selection (pre-registered,
+target + retention successes on 20 + 20 selection episodes): 39 / 38 / 38 / **40** at steps
+1000 / 2000 / 4000 / **6000**, so step 6000 is selected.
+
+| Frozen evaluation (same states as A and B1) | A: baseline | B1: expert-only | **B2: + rehearsal** |
+|---|---|---|---|
+| Target, task 56 (50 held-out states) | 0/50 = 0% | 45/50 = 90% | **46/50 = 92% (81-97%)** |
+| Retention, LIBERO-Object (10 tasks x 5 states) | 46/50 = 92% | 0/50 = 0% | **48/50 = 96% (87-99%)** |
+
+Paired tests:
+* B2 vs A on the target: **+92 pp** (bootstrap 95% CI +84 to +98), 46 fail→success, 0 reverse, McNemar p = 3e-14.
+* B2 vs B1 on the target: +2 pp (−6 to +10); discordant 3 vs 2; p = 1.0. **No measurable cost** of rehearsal on the new skill.
+* B2 vs A on retention: +4 pp (0 to +10); discordant 2 vs 0; p = 0.5. **No measurable forgetting**.
+
+![Before/after, all arms](../results/plots/before_after.png)
+
+Target failures (init states 13, 33, 34, 40): all `no_grasp`, the same mode as B1. The arm reaches
+the butter, the box tips or slips, and an empty gripper goes to the tray. States 33 and 34 fail in
+both B1 and B2, which suggests layouts that are harder to grasp. Successful episodes average 94
+steps (4.7 s) with 2.4 gripper switches.
+
+**Interpretation:** catastrophic forgetting in B1 was caused by the *training distribution*, not by
+which parameters were trained. Mixing the original data back in at a 1:1 ratio, at the same step
+budget, keeps the full new-skill gain (90% → 92%, not significantly different) and preserves the old
+skill (92% → 96%, not significantly different). Updating the 100M-parameter action expert with
+rehearsal is enough to add this skill. Full fine-tuning was not needed to reach either goal.
+
+Caveats: one seed per arm; retention measured on one suite (LIBERO-Object, 50 episodes); 50
+target episodes per arm, so differences under ~10-15 pp between B1 and B2 are not resolvable.

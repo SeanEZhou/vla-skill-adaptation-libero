@@ -1,0 +1,130 @@
+{
+ "config": {
+  "name": "finetune_expert_only_rehearsal",
+  "init_checkpoint": {
+   "repo_id": "lerobot/smolvla_libero",
+   "revision": "a24f1f380461b665158d52acd140152c79e8b36d",
+   "rename_map": {
+    "observation.images.image": "observation.images.camera1",
+    "observation.images.image2": "observation.images.camera2"
+   }
+  },
+  "dataset": {
+   "root": "data/lerobot/libero90_t56",
+   "repo_id": "local/libero90_t56_butter_tray",
+   "split": "data/lerobot/libero90_t56/vla_sim_poc/split.json"
+  },
+  "rehearsal": {
+   "repo_id": "lerobot/libero",
+   "revision": "a1aaacb7f6cd6ee5fb43120f673cebb0cfea7dd4",
+   "target_fraction": 0.5
+  },
+  "retention_monitor": {
+   "repo_id": "lerobot/libero",
+   "revision": "a1aaacb7f6cd6ee5fb43120f673cebb0cfea7dd4",
+   "task_index": 24,
+   "n_episodes": 10
+  },
+  "trainable": {
+   "freeze_vision_encoder": true,
+   "train_expert_only": true
+  },
+  "normalization": "checkpoint",
+  "training": {
+   "steps": 6000,
+   "batch_size": 32,
+   "num_workers": 8,
+   "seed": 0,
+   "log_every": 50,
+   "val_every": 250,
+   "save_steps": [
+    1000,
+    2000,
+    4000,
+    6000
+   ],
+   "checkpoint_every_min": 30,
+   "output_dir": "outputs/train/expert_only_rehearsal_s0"
+  }
+ },
+ "steps": 6000,
+ "params": {
+  "total_M": 450.0,
+  "trainable_M": 99.9,
+  "trainable_dtypes": [
+   "torch.bfloat16",
+   "torch.float32"
+  ]
+ },
+ "data": {
+  "target_frames": 4517,
+  "rehearsal_frames": 273465,
+  "target_fraction": 0.5
+ },
+ "n_val_frames": 510,
+ "optimizer": {
+  "lr": 0.0001,
+  "weight_decay": 1e-10,
+  "grad_clip_norm": 10.0,
+  "betas": [
+   0.9,
+   0.95
+  ],
+  "eps": 1e-08
+ },
+ "scheduler": {
+  "num_warmup_steps": 1000,
+  "num_decay_steps": 25000,
+  "peak_lr": 0.0001,
+  "decay_lr": 2.5e-06
+ },
+ "init_checkpoint": {
+  "repo_id": "lerobot/smolvla_libero",
+  "revision": "a24f1f380461b665158d52acd140152c79e8b36d",
+  "rename_map": {
+   "observation.images.image": "observation.images.camera1",
+   "observation.images.image2": "observation.images.camera2"
+  },
+  "local_dir": "~/.cache/huggingface/hub/models--lerobot--smolvla_libero/snapshots/a24f1f380461b665158d52acd140152c79e8b36d"
+ },
+ "manifest": {
+  "created_utc": "2026-10-20T17:04:39+00:00",
+  "python": "3.12.12",
+  "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.35",
+  "packages": {
+   "lerobot": "0.6.1",
+   "torch": "2.11.0+cu128",
+   "torchvision": "0.26.0+cu128",
+   "transformers": "5.5.4",
+   "mujoco": "3.3.7",
+   "robosuite": "1.4.0",
+   "hf-libero": "0.1.4",
+   "bddl": "1.0.1",
+   "gymnasium": "1.4.0",
+   "numpy": "2.2.6",
+   "huggingface_hub": "1.33.0",
+   "datasets": "4.8.5",
+   "torchcodec": "0.11.1",
+   "safetensors": "0.8.0"
+  },
+  "lerobot_source": {
+   "url": "https://github.com/huggingface/lerobot.git",
+   "vcs_info": {
+    "vcs": "git",
+    "commit_id": "7e241bd630a3719a56157a497ce5d08f244784f1",
+    "requested_revision": "7e241bd630a3719a56157a497ce5d08f244784f1"
+   }
+  },
+  "gpu": {
+   "name": "NVIDIA GeForce RTX 4070 SUPER",
+   "cuda_runtime": "12.8",
+   "total_mem_gb": 12.9,
+   "driver": "610.88"
+  },
+  "mujoco_gl": "egl",
+  "hub_references": {
+   "lerobot/libero-assets (LIBERO meshes/textures)": "0b3ea86be5fe169d0fd036ae63d1070ec09e90f6",
+   "HuggingFaceTB/SmolVLM2-500M-Video-Instruct (tokenizer/VLM config)": "7b375e1b73b11138ff12fe22c8f2822d8fe03467"
+  }
+ }
+}

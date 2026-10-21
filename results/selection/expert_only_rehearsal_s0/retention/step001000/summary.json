@@ -1,0 +1,144 @@
+{
+ "policy": "ft_expert_rehearsal_s0_step001000",
+ "per_task": {
+  "0": {
+   "instruction": "pick up the alphabet soup and place it in the basket",
+   "successes": 2,
+   "n": 2,
+   "rate": 1.0,
+   "ci95": [
+    0.34238022750665303,
+    1.0
+   ],
+   "mean_steps": 143.0,
+   "eval_wall_time_s": 92.1296107799999,
+   "inference_latency_mean_ms": 836.8536680785253
+  },
+  "1": {
+   "instruction": "pick up the cream cheese and place it in the basket",
+   "successes": 2,
+   "n": 2,
+   "rate": 1.0,
+   "ci95": [
+    0.34238022750665303,
+    1.0
+   ],
+   "mean_steps": 157.0,
+   "eval_wall_time_s": 32.992286085999694,
+   "inference_latency_mean_ms": 426.3552629503439
+  },
+  "2": {
+   "instruction": "pick up the salad dressing and place it in the basket",
+   "successes": 2,
+   "n": 2,
+   "rate": 1.0,
+   "ci95": [
+    0.34238022750665303,
+    1.0
+   ],
+   "mean_steps": 122.0,
+   "eval_wall_time_s": 74.60324775399931,
+   "inference_latency_mean_ms": 768.6373025385744
+  },
+  "3": {
+   "instruction": "pick up the bbq sauce and place it in the basket",
+   "successes": 1,
+   "n": 2,
+   "rate": 0.5,
+   "ci95": [
+    0.09453120573423074,
+    0.9054687942657693
+   ],
+   "mean_steps": 207.0,
+   "eval_wall_time_s": 114.84996772400063,
+   "inference_latency_mean_ms": 784.9798067677674
+  },
+  "4": {
+   "instruction": "pick up the ketchup and place it in the basket",
+   "successes": 2,
+   "n": 2,
+   "rate": 1.0,
+   "ci95": [
+    0.34238022750665303,
+    1.0
+   ],
+   "mean_steps": 140.5,
+   "eval_wall_time_s": 29.102954642999975,
+   "inference_latency_mean_ms": 441.81221558339445
+  },
+  "5": {
+   "instruction": "pick up the tomato sauce and place it in the basket",
+   "successes": 2,
+   "n": 2,
+   "rate": 1.0,
+   "ci95": [
+    0.34238022750665303,
+    1.0
+   ],
+   "mean_steps": 185.0,
+   "eval_wall_time_s": 78.89284308999959,
+   "inference_latency_mean_ms": 665.7252409642529
+  },
+  "6": {
+   "instruction": "pick up the butter and place it in the basket",
+   "successes": 2,
+   "n": 2,
+   "rate": 1.0,
+   "ci95": [
+    0.34238022750665303,
+    1.0
+   ],
+   "mean_steps": 143.0,
+   "eval_wall_time_s": 80.68632071999946,
+   "inference_latency_mean_ms": 760.0306372665467
+  },
+  "7": {
+   "instruction": "pick up the milk and place it in the basket",
+   "successes": 2,
+   "n": 2,
+   "rate": 1.0,
+   "ci95": [
+    0.34238022750665303,
+    1.0
+   ],
+   "mean_steps": 132.5,
+   "eval_wall_time_s": 57.88916486200014,
+   "inference_latency_mean_ms": 592.071902250057
+  },
+  "8": {
+   "instruction": "pick up the chocolate pudding and place it in the basket",
+   "successes": 2,
+   "n": 2,
+   "rate": 1.0,
+   "ci95": [
+    0.34238022750665303,
+    1.0
+   ],
+   "mean_steps": 144.0,
+   "eval_wall_time_s": 52.79009313400002,
+   "inference_latency_mean_ms": 578.0047039523846
+  },
+  "9": {
+   "instruction": "pick up the orange juice and place it in the basket",
+   "successes": 2,
+   "n": 2,
+   "rate": 1.0,
+   "ci95": [
+    0.34238022750665303,
+    1.0
+   ],
+   "mean_steps": 143.5,
+   "eval_wall_time_s": 84.27333046100011,
+   "inference_latency_mean_ms": 793.5240203823322
+  }
+ },
+ "overall": {
+  "successes": 19,
+  "n": 20,
+  "rate": 0.95,
+  "ci95": [
+   0.763868806553258,
+   0.9911185511992047
+  ]
+ }
+}

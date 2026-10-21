@@ -1,0 +1,48 @@
+# Arm B2: action-expert-only fine-tune WITH REHEARSAL. Identical to B1
+# (configs/train_expert_only.yaml) except that each batch mixes target-task frames with the
+# checkpoint's own original training data (lerobot/libero, 40 tasks), to counter the catastrophic
+# forgetting measured in B1 (LIBERO-Object 46/50 -> 0/50).
+name: finetune_expert_only_rehearsal
+
+init_checkpoint:
+  repo_id: lerobot/smolvla_libero
+  revision: a24f1f380461b665158d52acd140152c79e8b36d
+  rename_map:
+    observation.images.image: observation.images.camera1
+    observation.images.image2: observation.images.camera2
+
+dataset:
+  root: data/lerobot/libero90_t56
+  repo_id: local/libero90_t56_butter_tray
+  split: data/lerobot/libero90_t56/vla_sim_poc/split.json   # 45 train / 5 val episodes
+
+rehearsal:
+  # The exact data smolvla_libero was trained on; its stats ARE the checkpoint's normalization stats.
+  repo_id: lerobot/libero
+  revision: a1aaacb7f6cd6ee5fb43120f673cebb0cfea7dd4
+  target_fraction: 0.5      # expected share of target-task frames per batch (weighted sampling)
+
+retention_monitor:
+  # Offline loss on a known task, logged with the target val loss (fixed noise). This is the
+  # training data of the original checkpoint, so it shows forgetting, not generalization.
+  repo_id: lerobot/libero
+  revision: a1aaacb7f6cd6ee5fb43120f673cebb0cfea7dd4
+  task_index: 24            # libero_object task 0, "pick up the alphabet soup and place it in the basket"
+  n_episodes: 10
+
+trainable:
+  freeze_vision_encoder: true
+  train_expert_only: true
+
+normalization: checkpoint
+
+training:
+  steps: 6000               # same compute as B1; target frames are seen ~half as often
+  batch_size: 32
+  num_workers: 8
+  seed: 0
+  log_every: 50
+  val_every: 250
+  save_steps: [1000, 2000, 4000, 6000]
+  checkpoint_every_min: 30  # resumable training state (resume/), also written on SIGTERM / Ctrl+C
+  output_dir: outputs/train/expert_only_rehearsal_s0

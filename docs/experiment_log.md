@@ -144,3 +144,70 @@ action query); 4 workers gave 1.5 s/step, 8 workers make it GPU-bound.
   despite the frozen VLM.
 * Data-loading note: inference latency during selection runs was inflated (540-780 ms) by training
   sharing the GPU; the frozen eval was run alone (358 ms).
+
+## 2026-10-20 — Arm B2: action expert only + rehearsal
+
+Motivation: B1 learned the target task (0 → 90%) but forgot LIBERO-Object (92% → 0%). B2 is identical
+except that each batch mixes target frames with the checkpoint's own original training data
+(`lerobot/libero@a1aaacb7`, 40 tasks, 273k frames), **50% target in expectation** (weighted
+sampling); same 6,000 steps, batch 32, presets, normalization (`configs/train_expert_only_rehearsal.yaml`).
+A retention monitor (fixed-noise loss on libero_object task 0 training episodes) is logged with
+the target validation loss.
+
+Engineering:
+* `train.py` now saves a resumable state (weights + optimizer + scheduler + step + RNG) every 30
+  min and on SIGTERM/Ctrl+C (first signal: finish the step, save, exit; second: abort). It writes to a
+  temp dir and then swaps it in. Tested end to end on a 200-step smoke run: SIGTERM at step 101,
+  resumed with `--resume`, LR continued on schedule (5.1e-5 → 4.4e-5), finished at 200. After a
+  resume the data order is reseeded, so it is not bit-identical to an uninterrupted run.
+* Bug found by the smoke run: LeRobot returns single-frame images as (1,C,H,W) from image-backed
+  datasets but (C,H,W) from video-backed ones, so mixed batches failed to collate. All datasets now
+  go through `SingleFrameImages` (values unchanged; SmolVLA uses the last frame either way).
+* Steps run at ~0.6 s (vs ~1.1 s for B1): AV1 video frames decode faster than our PNG frames.
+
+**Checkpoint selection protocol (pre-registered before any B2 rollout):**
+* Candidates: steps 1000, 2000, 4000, 6000.
+* Target selection set: task 56, seeded layouts 20000-20019 (20 episodes, same as B1).
+* Retention selection set: libero_object tasks 0-9 x official init states **5-6** (20 episodes),
+  disjoint from the retention evaluation set (init states 0-4).
+* Rule: maximise (target selection successes + retention selection successes). Ties go to the lower
+  target held-out-episode loss.
+* The selected checkpoint gets the frozen evaluations: task 56 init 0-49 (paired with A and B1) and
+  libero_object tasks 0-9 x init 0-4 (paired with the 46/50 baseline).
+
+### B2 incident: data-loader crash at ~step 1,300 (first launch)
+
+* A DataLoader worker raised `torchcodec ... Could not push packet to decoder: Invalid data found`
+  while decoding a rehearsal (AV1) frame; the whole run died. No resume state existed yet (the first
+  30-min save had not come due), so ~17 min of training were lost.
+* Root cause: transient, not data. All 74 `lerobot/libero` video files decode cleanly with
+  `ffmpeg -v error` (44 s full scan). Random-access AV1 decoding with 8 parallel workers flakes
+  rarely; over ~100k decodes per run it is likely to happen at least once.
+* Fixes: (1) `RetryOnDecodeError` wraps the training dataset: retry the same sample up to 3 times,
+  then substitute a random sample, and log it (unit-tested). (2) Any unexpected exception now saves a
+  resumable checkpoint before re-raising (tested with an injected crash at step 30, then resume). (3)
+  Resume state is also written at every evaluation checkpoint (1000/2000/4000/6000), not only every
+  30 minutes.
+* The crashed run's step-1000 selection results (target 19/20, retention 18/20) are archived in
+  `results/selection/archive/` and **not used**: the relaunched run produces new checkpoints, and
+  only those are evaluated under the protocol.
+* **Diagnosis refined (after the relaunched run):** the retry wrapper logged 4 consecutive failures on
+  one sample (rehearsal frame 163,081 = episode 872, frame 0, the first frame of an episode inside a
+  shared video file) and then substituted another sample. That same frame decodes fine in a fresh
+  process, through both a plain and a delta-timestamp dataset. LeRobot caches one torchcodec
+  `VideoDecoder` per file per worker process (`video_utils._default_decoder_cache`, LRU), and a
+  cached decoder in a long-lived worker gets into a bad state after many random seeks. Retries
+  reused the broken decoder, which explains the 4 identical failures. Fix: `RetryOnDecodeError` now
+  clears the decoder cache before each retry. The relaunched B2 run used the earlier version, so
+  exactly 1 rehearsal sample was substituted (1 of ~96k rehearsal draws, no material effect).
+
+### Arm B2 results (2026-10-20)
+
+* Relaunched run: 6,000 steps, 88 min, 8.3 GB, $0. One rehearsal sample substituted by the retry
+  wrapper (see incident notes); no crash.
+* Selection (target 20 + retention 20): step 1000 20+19, 2000 20+18, 4000 20+18, **6000 20+20 →
+  selected**. Config: `configs/finetuned_expert_only_rehearsal.yaml`.
+* Frozen evals: task 56 **46/50 (92%)**; LIBERO-Object **48/50 (96%)** (baseline 46/50, B1 0/50).
+  Paired vs B1 on target: p = 1.0; vs baseline on retention: p = 0.5.
+* Target failures: init 13, 33, 34, 40, all `no_grasp` (videos reviewed). 33 and 34 also failed in B1.
+* Decision: full fine-tuning is not needed. Expert-only + rehearsal meets both goals.

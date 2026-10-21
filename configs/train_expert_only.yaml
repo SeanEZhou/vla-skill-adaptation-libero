@@ -35,4 +35,5 @@ training:
   log_every: 50
   val_every: 250
   save_steps: [1000, 2000, 4000, 6000]
+  checkpoint_every_min: 30  # resumable training state (resume/), also written on SIGTERM / Ctrl+C
   output_dir: outputs/train/expert_only_s0
